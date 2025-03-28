@@ -14,12 +14,21 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  testing:
-    # The type of runner that the job will run on
+  define_env:
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - run: echo "FOO1=bar1" >> $GITHUB_ENV
+
+  testing:
+    runs-on: ubuntu-latest
+    needs: define_env
+    steps:
+      - run: export FOO2=bar2
+      - run: echo "FOO3=bar3" >> $GITHUB_ENV
+      - name: Print env vars in action
+        run: |
+          echo "FOO1=${{ env.FOO1 }}"
+          echo "FOO2=${{ env.FOO2 }}"
+          echo "FOO3=${{ env.FOO3 }}"
       - name: Print env vars available in process
         run: env
